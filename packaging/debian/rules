@@ -1,14 +1,10 @@
 #!/usr/bin/make -f
-# qfontviewer builds with Qt6's qmake (qmake6). We invoke qmake6 explicitly
-# rather than rely on a qmake debhelper buildsystem (the stock one targets Qt5),
-# so the build is unambiguous across debhelper versions. dh's makefile
-# buildsystem then drives the build via "make" once the Makefile exists.
+# qfontviewer builds with CMake; debhelper auto-detects the cmake buildsystem
+# (CMakeLists.txt at the package root) and handles CMAKE_INSTALL_PREFIX=/usr and
+# DESTDIR. Tests are disabled for the package build.
 
 %:
 	dh $@
 
 override_dh_auto_configure:
-	qmake6 PREFIX=/usr
-
-override_dh_auto_install:
-	make install INSTALL_ROOT=$(CURDIR)/debian/qfontviewer
+	dh_auto_configure -- -DBUILD_TESTING=OFF

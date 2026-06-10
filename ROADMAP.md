@@ -3,17 +3,16 @@
 Direction for `qfontviewer` after the 1.0.0 release. Items are grouped by the
 value they add; order within a tier is rough priority.
 
-## Tier 1 — code quality & "modern Qt6/C++" foundations
+## Tier 1 — code quality & "modern Qt6/C++" foundations ✅ (v1.1.0)
 
-- [ ] **CMake as a first-class build** — promote the `BUILDING.md` recipe to a real
-      `CMakeLists.txt`; keep qmake6 working in parallel during transition.
-- [ ] **clang-format** — committed `.clang-format`; CI format check.
-- [ ] **clang-tidy** — `.clang-tidy` (bugprone / performance / modernize / core guidelines).
-- [ ] **clazy** — Qt-specific static analysis in CI.
-- [ ] **QtTest unit tests** (`tests/`) — cover the non-GUI logic: `FontFilterProxy`
-      filtering, `GlyphModel` coverage, the clipping verdict. Wire into `ctest`.
-- [ ] **GitHub Actions CI** — build qmake6 + cmake, run format check, clang-tidy,
-      clazy, and tests; status badge in the README.
+- [x] **CMake as the build** — `CMakeLists.txt` replaced qmake6 entirely.
+- [x] **clang-format** — committed `.clang-format`; CI format check (blocking).
+- [x] **clang-tidy** — `.clang-tidy` (bugprone / performance / modernize / core guidelines).
+- [x] **clazy** — Qt-specific static analysis in CI (advisory).
+- [x] **QtTest unit tests** (`tests/`) — `FontFilterProxy` filtering, `GlyphModel`
+      coverage, and the clipping verdict (`qfv::analyzeClip`); wired into `ctest`.
+- [x] **GitHub Actions CI** — builds on Ubuntu + Arch, runs format check + tests
+      (blocking) and clang-tidy + clazy (advisory); status badge in the README.
 
 ## Tier 2 — CI depth & repository hygiene
 

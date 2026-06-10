@@ -11,6 +11,7 @@ It was written specifically to avoid pulling in a full desktop environment just 
 look at fonts: it links **only `qt6-base`** (Qt 6 Widgets). No GNOME or KDE
 libraries, no QML runtime, no Python — just one Qt library and a ~150 KB binary.
 
+[![CI](https://github.com/madalinignisca/qfontviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/madalinignisca/qfontviewer/actions/workflows/ci.yml)
 ![license](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)
 ![Qt](https://img.shields.io/badge/Qt-6%20Widgets-41cd52)
 ![deps](https://img.shields.io/badge/runtime%20deps-qt6--base%20only-brightgreen)
@@ -49,30 +50,31 @@ footprint.
 | | |
 |---|---|
 | **Runtime** | `qt6-base` (Qt 6 Widgets) — and `qt6-wayland` if you run Wayland |
-| **Build**   | a C++17 compiler, `qmake6` (ships with `qt6-base`), `make` |
+| **Build**   | a C++17 compiler, **CMake ≥ 3.21**, Ninja or Make |
 
 ## Build & install
 
-### From source (qmake6)
+### From source (CMake)
 
 ```sh
 git clone https://github.com/madalinignisca/qfontviewer.git
 cd qfontviewer
-qmake6 PREFIX=/usr/local       # default prefix; see below
-make -j"$(nproc)"
-sudo make install
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build build
+ctest --test-dir build --output-on-failure   # optional: run the unit tests
+sudo cmake --install build                    # default prefix /usr/local
 ```
 
 **Personal install, no sudo** — install under your home directory:
 
 ```sh
-qmake6 PREFIX="$HOME/.local"
-make -j"$(nproc)"
-make install                   # → ~/.local/bin, ~/.local/share/...
+cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX="$HOME/.local"
+cmake --build build
+cmake --install build                         # → ~/.local/bin, ~/.local/share/...
 ```
 
-`PREFIX` controls where files go; packagers additionally pass
-`make install INSTALL_ROOT="$DESTDIR"`.
+See [`BUILDING.md`](BUILDING.md) for options (`BUILD_TESTING`, prefixes) and the
+linter/CI commands.
 
 ### Packages
 
@@ -99,7 +101,9 @@ The Wayland `app_id` is `qfontviewer`, so tiling-WM users can target it directly
 
 Issues and pull requests are welcome. The codebase is deliberately small and plain
 Qt6 Widgets C++17 — no extra dependencies, please, to keep the "minimal" promise.
-A migration path to CMake is documented in [`BUILDING.md`](BUILDING.md).
+Build, test, and linting instructions are in [`BUILDING.md`](BUILDING.md); CI runs
+the tests plus clang-format/clang-tidy/clazy on every push and PR. Please run
+`clang-format` and `ctest` before opening a PR.
 
 ## License
 

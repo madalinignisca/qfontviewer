@@ -14,32 +14,38 @@
 
 namespace {
 
-struct Range { uint lo; uint hi; };
+struct Range {
+    uint lo;
+    uint hi;
+};
 
 // Useful for evaluating console/monospace fonts: ASCII, Latin, punctuation,
 // arrows, math, and (importantly) box-drawing + block elements.
 const Range kRanges[] = {
-    {0x0020, 0x007E}, {0x00A0, 0x00FF}, {0x0100, 0x024F},
-    {0x2000, 0x206F}, {0x2190, 0x21FF}, {0x2200, 0x22FF},
-    {0x2500, 0x257F}, {0x2580, 0x259F},
+    { 0x0020, 0x007E },
+    { 0x00A0, 0x00FF },
+    { 0x0100, 0x024F },
+    { 0x2000, 0x206F },
+    { 0x2190, 0x21FF },
+    { 0x2200, 0x22FF },
+    { 0x2500, 0x257F },
+    { 0x2580, 0x259F },
 };
 
 // Paints each cell: the glyph (large) over its U+XXXX label (small).
-class GlyphDelegate : public QStyledItemDelegate
-{
+class GlyphDelegate : public QStyledItemDelegate {
 public:
     using QStyledItemDelegate::QStyledItemDelegate;
 
     QString family;
-    int     glyphPx = 30;
+    int glyphPx = 30;
 
     QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const override
     {
         return QSize(60, 70);
     }
 
-    void paint(QPainter *p, const QStyleOptionViewItem &opt,
-               const QModelIndex &idx) const override
+    void paint(QPainter *p, const QStyleOptionViewItem &opt, const QModelIndex &idx) const override
     {
         const bool sel = opt.state & QStyle::State_Selected;
         p->fillRect(opt.rect, sel ? opt.palette.highlight() : QBrush(Qt::white));
@@ -65,7 +71,7 @@ public:
         p->setPen(sel ? fg : QColor(120, 120, 120));
         QRect labelRect(opt.rect.left(), opt.rect.bottom() - 15, opt.rect.width(), 14);
         p->drawText(labelRect, Qt::AlignCenter,
-                    QStringLiteral("U+%1").arg(cp, 4, 16, QLatin1Char('0')).toUpper());
+            QStringLiteral("U+%1").arg(cp, 4, 16, QLatin1Char('0')).toUpper());
     }
 };
 
@@ -74,7 +80,10 @@ public:
 // ----------------------------------------------------------------------------
 // GlyphModel
 // ----------------------------------------------------------------------------
-GlyphModel::GlyphModel(QObject *parent) : QAbstractListModel(parent) {}
+GlyphModel::GlyphModel(QObject *parent)
+    : QAbstractListModel(parent)
+{
+}
 
 void GlyphModel::setFamily(const QString &family)
 {
@@ -84,7 +93,7 @@ void GlyphModel::setFamily(const QString &family)
 
     if (!family.isEmpty()) {
         QFont f(family);
-        f.setStyleStrategy(QFont::NoFontMerging);   // coverage of THIS family only
+        f.setStyleStrategy(QFont::NoFontMerging); // coverage of THIS family only
         const QFontMetrics fm(f);
         for (const Range &r : kRanges)
             for (uint cp = r.lo; cp <= r.hi; ++cp)
@@ -102,16 +111,22 @@ int GlyphModel::rowCount(const QModelIndex &parent) const
 QVariant GlyphModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || index.row() >= m_cps.size())
-        return {};
+        return { };
     const uint cp = m_cps.at(index.row());
     switch (role) {
-    case Qt::DisplayRole:   return QString::fromUcs4(reinterpret_cast<const char32_t *>(&cp), 1);
-    case CodepointRole:     return cp;
-    default:                return {};
+    case Qt::DisplayRole:
+        return QString::fromUcs4(reinterpret_cast<const char32_t *>(&cp), 1);
+    case CodepointRole:
+        return cp;
+    default:
+        return { };
     }
 }
 
-int GlyphModel::rowOfCodepoint(uint cp) const { return m_cps.indexOf(cp); }
+int GlyphModel::rowOfCodepoint(uint cp) const
+{
+    return m_cps.indexOf(cp);
+}
 uint GlyphModel::codepointAt(int row) const
 {
     return (row >= 0 && row < m_cps.size()) ? m_cps.at(row) : 0;
@@ -120,7 +135,8 @@ uint GlyphModel::codepointAt(int row) const
 // ----------------------------------------------------------------------------
 // GlyphGrid
 // ----------------------------------------------------------------------------
-GlyphGrid::GlyphGrid(QWidget *parent) : QWidget(parent)
+GlyphGrid::GlyphGrid(QWidget *parent)
+    : QWidget(parent)
 {
     m_model = new GlyphModel(this);
 
@@ -145,14 +161,14 @@ GlyphGrid::GlyphGrid(QWidget *parent) : QWidget(parent)
     lay->addWidget(m_view, 1);
     lay->addWidget(m_detail, 0);
 
-    connect(m_view->selectionModel(), &QItemSelectionModel::currentChanged,
-            this, &GlyphGrid::onCurrentChanged);
+    connect(m_view->selectionModel(), &QItemSelectionModel::currentChanged, this,
+        &GlyphGrid::onCurrentChanged);
 }
 
 void GlyphGrid::setFamily(const QString &family)
 {
     m_family = family;
-    static_cast<GlyphDelegate *>(m_delegate)->family = family;   // we created it
+    static_cast<GlyphDelegate *>(m_delegate)->family = family; // we created it
     m_model->setFamily(family);
     m_detail->clear();
 }
@@ -161,8 +177,7 @@ void GlyphGrid::gotoCodepoint(uint cp)
 {
     const int row = m_model->rowOfCodepoint(cp);
     if (row < 0) {
-        m_detail->setText(tr("U+%1 not in this font")
-                              .arg(cp, 4, 16, QLatin1Char('0')).toUpper());
+        m_detail->setText(tr("U+%1 not in this font").arg(cp, 4, 16, QLatin1Char('0')).toUpper());
         return;
     }
     const QModelIndex idx = m_model->index(row, 0);
@@ -181,7 +196,6 @@ void GlyphGrid::onCurrentChanged(const QModelIndex &cur)
     bigf.setPixelSize(40);
     bigf.setStyleStrategy(QFont::NoFontMerging);
     m_detail->setFont(bigf);
-    m_detail->setText(QStringLiteral("%1    U+%2")
-                          .arg(ch)
-                          .arg(cp, 4, 16, QLatin1Char('0')).toUpper());
+    m_detail->setText(
+        QStringLiteral("%1    U+%2").arg(ch).arg(cp, 4, 16, QLatin1Char('0')).toUpper());
 }

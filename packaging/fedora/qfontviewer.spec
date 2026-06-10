@@ -1,5 +1,5 @@
 Name:           qfontviewer
-Version:        1.0.0
+Version:        1.1.0
 Release:        1%{?dist}
 Summary:        Minimal Qt6 font viewer with a console-rendering preview
 
@@ -7,8 +7,9 @@ License:        GPL-3.0-or-later
 URL:            https://github.com/madalinignisca/qfontviewer
 Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
 
+BuildRequires:  cmake
 BuildRequires:  gcc-c++
-BuildRequires:  make
+BuildRequires:  ninja-build
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  desktop-file-utils
 
@@ -29,12 +30,11 @@ families.
 %autosetup
 
 %build
-qmake6 PREFIX=%{_prefix}
-%make_build
+%cmake -DBUILD_TESTING=OFF
+%cmake_build
 
 %install
-# qmake's generated Makefile uses INSTALL_ROOT (not DESTDIR) for staging.
-make install INSTALL_ROOT=%{buildroot}
+%cmake_install
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
@@ -47,5 +47,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/scalable/apps/qfontviewer.svg
 
 %changelog
+* Wed Jun 10 2026 Madalin Ignisca <git@madalin.me> - 1.1.0-1
+- Switch build system from qmake6 to CMake
+- Add unit tests, linter configs, and CI
+
 * Wed Jun 10 2026 Madalin Ignisca <git@madalin.me> - 1.0.0-1
 - Initial package

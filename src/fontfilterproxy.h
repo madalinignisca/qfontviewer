@@ -7,8 +7,7 @@
 
 // Filters the flat list of font families by (a) a case-insensitive substring
 // of the family name and (b) optionally only fixed-pitch (monospace) families.
-class FontFilterProxy : public QSortFilterProxyModel
-{
+class FontFilterProxy : public QSortFilterProxyModel {
     Q_OBJECT
 public:
     explicit FontFilterProxy(QObject *parent = nullptr);
@@ -20,6 +19,6 @@ protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
 private:
-    bool    m_monoOnly = false;
+    bool m_monoOnly = false;
     QString m_name;
 };

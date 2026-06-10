@@ -1,0 +1,10 @@
+---
+# qfontviewer C++ style — WebKit base (4-space, function brace on next line,
+# control-statement brace attached), matching the existing sources.
+BasedOnStyle: WebKit
+IndentWidth: 4
+ColumnLimit: 100
+PointerAlignment: Right
+AllowShortFunctionsOnASingleLine: Inline
+SortIncludes: false
+SpaceAfterCStyleCast: true

@@ -2,66 +2,58 @@
 
 ## Dependencies
 
-- C++17 compiler (gcc/clang)
-- `qmake6` and Qt 6 Widgets headers — on Arch this is `qt6-base`; on Debian
-  `qt6-base-dev`; on Fedora `qt6-qtbase-devel`.
-- `make`
+- C++17 compiler (gcc or clang)
+- **CMake** ≥ 3.21 and Qt 6 Widgets — on Arch this is `qt6-base` + `cmake`; on Debian
+  `qt6-base-dev` + `cmake`; on Fedora `qt6-qtbase-devel` + `cmake`.
+- A generator: `ninja` (recommended) or `make`.
+- For the tests: Qt 6 Test (ships with `qt6-base` / `qt6-base-dev` / `qt6-qtbase-devel`).
 
-## qmake6 (default)
-
-```sh
-qmake6 PREFIX=/usr/local
-make -j"$(nproc)"
-make install                      # honors PREFIX and INSTALL_ROOT
-```
-
-- `PREFIX` — install prefix (default `/usr/local`). Use `$HOME/.local` for a
-  no-sudo personal install, or `/usr` for distro packages.
-- `INSTALL_ROOT` — staging dir for packaging (`make install INSTALL_ROOT=$pkgdir`).
-
-Installed files:
-
-| file | location |
-|------|----------|
-| binary | `$PREFIX/bin/qfontviewer` |
-| desktop entry | `$PREFIX/share/applications/qfontviewer.desktop` |
-| icon | `$PREFIX/share/icons/hicolor/scalable/apps/qfontviewer.svg` |
-
-## Migrating to CMake (optional)
-
-The C++ sources need **no** changes. Drop in this `CMakeLists.txt`:
-
-```cmake
-cmake_minimum_required(VERSION 3.21)
-project(qfontviewer VERSION 1.0.0 LANGUAGES CXX)
-
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
-qt_standard_project_setup()
-
-qt_add_executable(qfontviewer
-    src/main.cpp
-    src/mainwindow.cpp
-    src/fontfilterproxy.cpp
-    src/previewwidget.cpp
-    src/glyphgrid.cpp)
-target_link_libraries(qfontviewer PRIVATE Qt6::Widgets)
-
-include(GNUInstallDirs)
-install(TARGETS qfontviewer RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES qfontviewer.desktop
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
-install(FILES qfontviewer.svg
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
-```
-
-Then:
+## Build, test, install
 
 ```sh
-sudo pacman -S cmake ninja        # or your distro's equivalent
-cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/usr
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build build
+ctest --test-dir build --output-on-failure
+sudo cmake --install build              # default prefix /usr/local
+```
+
+**Personal install, no sudo:**
+
+```sh
+cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX="$HOME/.local"
+cmake --build build
+cmake --install build                   # → ~/.local/bin, ~/.local/share/...
+```
+
+**Packaging** (stage into a buildroot):
+
+```sh
+cmake -B build -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=None -DBUILD_TESTING=OFF
 cmake --build build
 DESTDIR="$pkgdir" cmake --install build
 ```
 
-`qt_standard_project_setup()` enables automoc, so the `Q_OBJECT` classes are
-handled automatically — just like qmake does today.
+### Options
+
+| Option | Default | Meaning |
+|--------|---------|---------|
+| `CMAKE_INSTALL_PREFIX` | `/usr/local` | install prefix |
+| `BUILD_TESTING` | `ON` | build the QtTest unit tests (`tests/`) |
+
+Installed files: `${prefix}/bin/qfontviewer`,
+`${prefix}/share/applications/qfontviewer.desktop`,
+`${prefix}/share/icons/hicolor/scalable/apps/qfontviewer.svg`.
+
+## Code quality
+
+The repo ships `.clang-format` and `.clang-tidy`. CI (`.github/workflows/ci.yml`)
+builds on Ubuntu and Arch, runs the tests, checks formatting, and runs clang-tidy +
+clazy (advisory). Run them locally:
+
+```sh
+clang-format --dry-run --Werror src/*.cpp src/*.h tests/*.cpp
+# analysis builds are configured with clang so Qt's GCC-only flags don't trip the tools:
+cmake -B build-clang -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DBUILD_TESTING=OFF
+clang-tidy -p build-clang src/*.cpp
+clazy-standalone -p build-clang src/*.cpp
+```

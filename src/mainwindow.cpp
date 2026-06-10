@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     splitter->setStretchFactor(0, 0);
     splitter->setStretchFactor(1, 1);
-    splitter->setSizes({260, 760});
+    splitter->setSizes({ 260, 760 });
     setCentralWidget(splitter);
     statusBar();
 
@@ -80,11 +80,11 @@ QWidget *MainWindow::buildFontPanel()
 
     connect(m_search, &QLineEdit::textChanged, m_proxy, &FontFilterProxy::setNameFilter);
     connect(m_monoOnly, &QCheckBox::toggled, m_proxy, &FontFilterProxy::setMonospaceOnly);
-    connect(m_fontList->selectionModel(), &QItemSelectionModel::currentChanged,
-            this, [this](const QModelIndex &cur, const QModelIndex &) {
-                if (cur.isValid())
-                    onFontSelected(cur.data(Qt::DisplayRole).toString());
-            });
+    connect(m_fontList->selectionModel(), &QItemSelectionModel::currentChanged, this,
+        [this](const QModelIndex &cur, const QModelIndex &) {
+            if (cur.isValid())
+                onFontSelected(cur.data(Qt::DisplayRole).toString());
+        });
     return panel;
 }
 
@@ -109,7 +109,7 @@ QWidget *MainWindow::buildPreviewTab()
     m_zoom->setPrefix(tr("×"));
 
     m_aa = new QCheckBox(tr("Antialias"), tab);
-    m_aa->setChecked(false);                 // start in console mode
+    m_aa->setChecked(false); // start in console mode
     m_hint = new QCheckBox(tr("Hinting"), tab);
     m_hint->setChecked(true);
     m_compare = new QCheckBox(tr("Compare"), tab);
@@ -155,7 +155,8 @@ QWidget *MainWindow::buildPreviewTab()
     m_clip = new QLabel(tab);
     m_clip->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_clip->setStyleSheet(QStringLiteral("QLabel { font-family: monospace; padding: 4px; }"));
-    auto *legend = new QLabel(tr("overlay:  green = cell top   blue = baseline   red = cell bottom"), tab);
+    auto *legend
+        = new QLabel(tr("overlay:  green = cell top   blue = baseline   red = cell bottom"), tab);
     legend->setStyleSheet(QStringLiteral("QLabel { color: gray; }"));
     lay->addWidget(legend);
     lay->addWidget(m_clip);
@@ -167,10 +168,12 @@ QWidget *MainWindow::buildPreviewTab()
     connect(m_aa, &QCheckBox::toggled, this, &MainWindow::applyParams);
     connect(m_hint, &QCheckBox::toggled, this, &MainWindow::applyParams);
     connect(m_compare, &QCheckBox::toggled, this, &MainWindow::onCompareToggled);
-    connect(m_familyB, &QComboBox::currentTextChanged,
-            this, [this](const QString &fam) { if (m_prevB) m_prevB->setFamily(fam); });
-    connect(m_prevA, &PreviewWidget::metricsUpdated,
-            this, [this](const QString &r) { m_clip->setText(r); });
+    connect(m_familyB, &QComboBox::currentTextChanged, this, [this](const QString &fam) {
+        if (m_prevB)
+            m_prevB->setFamily(fam);
+    });
+    connect(m_prevA, &PreviewWidget::metricsUpdated, this,
+        [this](const QString &r) { m_clip->setText(r); });
 
     // zoom only matters in console mode
     connect(m_aa, &QCheckBox::toggled, m_zoom, [this](bool aa) { m_zoom->setEnabled(!aa); });
@@ -202,8 +205,10 @@ QWidget *MainWindow::buildGlyphTab()
 void MainWindow::onFontSelected(const QString &family)
 {
     m_currentFamily = family;
-    if (m_prevA) m_prevA->setFamily(family);
-    if (m_glyphs) m_glyphs->setFamily(family);
+    if (m_prevA)
+        m_prevA->setFamily(family);
+    if (m_glyphs)
+        m_glyphs->setFamily(family);
     refreshStatus(family);
 }
 
@@ -215,15 +220,17 @@ void MainWindow::applyParams()
     const bool aa = m_aa->isChecked();
     const bool hint = m_hint->isChecked();
 
-    for (PreviewWidget *pw : {m_prevA, m_prevB}) {
-        if (!pw) continue;
+    for (PreviewWidget *pw : { m_prevA, m_prevB }) {
+        if (!pw)
+            continue;
         pw->setText(text);
         pw->setPixelSize(px);
         pw->setZoom(z);
         pw->setAntialias(aa);
         pw->setHinting(hint);
     }
-    if (m_prevA) m_prevA->setFamily(m_currentFamily);
+    if (m_prevA)
+        m_prevA->setFamily(m_currentFamily);
 }
 
 void MainWindow::onCompareToggled(bool on)
@@ -252,8 +259,7 @@ void MainWindow::refreshStatus(const QString &family)
     const QStringList styles = QFontDatabase::styles(family);
     const bool mono = QFontDatabase::isFixedPitch(family);
     const bool scalable = QFontDatabase::isSmoothlyScalable(family);
-    statusBar()->showMessage(
-        tr("%1   •   %2 style(s)   •   monospace: %3   •   scalable: %4")
+    statusBar()->showMessage(tr("%1   •   %2 style(s)   •   monospace: %3   •   scalable: %4")
             .arg(family)
             .arg(styles.size())
             .arg(mono ? tr("yes") : tr("no"))

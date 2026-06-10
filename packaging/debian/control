@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Madalin Ignisca <git@madalin.me>
 Build-Depends: debhelper-compat (= 13),
-               qmake6,
+               cmake,
                qt6-base-dev
 Standards-Version: 4.6.2
 Homepage: https://github.com/madalinignisca/qfontviewer

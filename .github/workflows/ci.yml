@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test-ubuntu:
+    name: build & test (Ubuntu)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build g++ qt6-base-dev qt6-base-dev-tools \
+            fonts-dejavu-core fonts-liberation
+      - name: Configure
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+  build-test-arch:
+    name: build & test (Arch)
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install git (needed by checkout)
+        # Refresh the keyring first in case the base image is stale (rotated
+        # package signing keys would otherwise fail signature checks).
+        run: pacman -Sy --noconfirm archlinux-keyring && pacman -S --noconfirm git
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: pacman -S --noconfirm qt6-base cmake ninja gcc ttf-dejavu
+      - name: Configure
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+  format:
+    name: clang-format
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+      - name: Check formatting
+        run: clang-format --dry-run --Werror src/*.cpp src/*.h tests/*.cpp
+
+  analyze:
+    name: clang-tidy & clazy (advisory)
+    runs-on: ubuntu-24.04
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build clang clang-tidy clazy \
+            qt6-base-dev qt6-base-dev-tools
+      # Configure with clang so compile_commands.json carries clang-compatible
+      # flags (Qt6 adds the GCC-only -mno-direct-extern-access under g++, which
+      # clang-tidy/clazy cannot parse).
+      - name: Configure (clang, generates compile_commands.json)
+        run: >
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=OFF
+          -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang
+      - name: clang-tidy
+        run: clang-tidy -p build src/*.cpp
+      - name: clazy
+        run: clazy-standalone -p build src/*.cpp
