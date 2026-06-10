@@ -35,16 +35,21 @@ target_link_libraries(qfontviewer PRIVATE qfontviewer_core)
 target_include_directories(qfontviewer PRIVATE ${CMAKE_CURRENT_BINARY_DIR})  # version.h
 
 # Internationalization: compile translations/*.ts -> .qm and embed under :/i18n/.
-# Explicit lrelease + add_resources (stable across Qt 6.x) rather than the
-# one-call qt_add_translations (its embedding differs on older Qt).
-qt_add_lrelease(
-    TS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/translations/qfontviewer_ro.ts
-    QM_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/i18n
-    QM_FILES_OUTPUT_VARIABLE qm_files)
-qt_add_resources(qfontviewer "translations"
+# Drive lrelease directly via the stable Qt6::lrelease imported target instead of
+# qt_add_lrelease (whose keyword args differ across Qt 6.x — it broke configure on
+# the Qt 6.4 CI runner). add_custom_command's OUTPUT auto-wires the dependency so
+# qt_add_resources picks up the generated .qm.
+set(_qfv_ts ${CMAKE_CURRENT_SOURCE_DIR}/translations/qfontviewer_ro.ts)
+set(_qfv_qm ${CMAKE_CURRENT_BINARY_DIR}/qfontviewer_ro.qm)
+add_custom_command(
+    OUTPUT ${_qfv_qm}
+    COMMAND Qt6::lrelease ${_qfv_ts} -qm ${_qfv_qm}
+    DEPENDS ${_qfv_ts}
+    VERBATIM)
+qt_add_resources(qfontviewer "i18n"
     PREFIX "/i18n"
-    BASE ${CMAKE_CURRENT_BINARY_DIR}/i18n
-    FILES ${qm_files})
+    BASE ${CMAKE_CURRENT_BINARY_DIR}
+    FILES ${_qfv_qm})
 
 include(GNUInstallDirs)
 install(TARGETS qfontviewer RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
