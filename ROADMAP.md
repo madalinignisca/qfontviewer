@@ -27,13 +27,17 @@ value they add; order within a tier is rough priority.
 
 ## Tier 3 — Linux-desktop distribution polish
 
-- [ ] AppStream **metainfo** (`*.metainfo.xml`) with screenshots & description.
-- [ ] Internationalization: `lupdate`/`lrelease` workflow + initial `.ts` files
-      (the UI already uses `tr()` throughout).
-- [ ] `--version` CLI flag; refined / multi-size icon.
+- [x] AppStream **metainfo** (`data/io.github.madalinignisca.qfontviewer.metainfo.xml`),
+      validated in CI. (Screenshots still to add once an image is hosted.)
+- [x] Reverse-DNS app ID `io.github.madalinignisca.qfontviewer` (desktop/icon/app_id).
+- [x] Internationalization: `lupdate`/`lrelease` via CMake, `.qm` embedded under
+      `:/i18n/`, loaded at startup; Romanian starter translation.
+- [x] `--version` / `--help` CLI.
+- [ ] Refined / multi-size icon (current SVG is scalable; low priority).
 - [ ] **Flatpak / Flathub** — *needs discussion before any submission.* Flathub
       maintainers have pushed back on low-effort app submissions; evaluate whether
       Flathub is the right channel and how to present/maintain the app properly.
+      (The reverse-DNS ID prerequisite is now done.)
 
 ---
 

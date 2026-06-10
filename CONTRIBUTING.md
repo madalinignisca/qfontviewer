@@ -45,6 +45,20 @@ See [`BUILDING.md`](BUILDING.md) for options, prefixes, and the linter commands.
   The project is **REUSE-compliant** (`reuse lint` runs in CI); new files must carry
   an SPDX header or be covered by `REUSE.toml`.
 
+## Translations
+
+The UI uses Qt Linguist. To add a language, create a `.ts` for it and wire it into
+the build:
+
+```sh
+/usr/lib/qt6/bin/lupdate src/ -ts translations/qfontviewer_<lang>.ts   # e.g. _de, _fr
+# edit the .ts in Qt Linguist (or by hand), then add it to the
+# qt_add_lrelease(TS_FILES ...) list in CMakeLists.txt
+```
+
+`.qm` files are compiled and embedded under `:/i18n/`; the app loads the system
+locale's translation at startup. A Romanian (`ro`) starter translation is included.
+
 ## Reporting bugs / requesting features
 
 Use the GitHub issue templates. For security issues, see [`SECURITY.md`](SECURITY.md)

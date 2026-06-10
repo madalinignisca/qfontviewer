@@ -1,7 +1,9 @@
 Name:           qfontviewer
-Version:        1.1.0
+Version:        1.2.0
 Release:        1%{?dist}
 Summary:        Minimal Qt6 font viewer with a console-rendering preview
+
+%global app_id io.github.madalinignisca.qfontviewer
 
 License:        GPL-3.0-or-later
 URL:            https://github.com/madalinignisca/qfontviewer
@@ -11,7 +13,9 @@ BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  ninja-build
 BuildRequires:  qt6-qtbase-devel
+BuildRequires:  qt6-qttools-devel
 BuildRequires:  desktop-file-utils
+BuildRequires:  libappstream-glib
 
 Requires:       qt6-qtbase
 
@@ -37,16 +41,21 @@ families.
 %cmake_install
 
 %check
-desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/%{app_id}.desktop
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{app_id}.metainfo.xml
 
 %files
 %license COPYING
 %doc README.md CHANGELOG.md
 %{_bindir}/qfontviewer
-%{_datadir}/applications/qfontviewer.desktop
-%{_datadir}/icons/hicolor/scalable/apps/qfontviewer.svg
+%{_datadir}/applications/%{app_id}.desktop
+%{_datadir}/icons/hicolor/scalable/apps/%{app_id}.svg
+%{_metainfodir}/%{app_id}.metainfo.xml
 
 %changelog
+* Wed Jun 10 2026 Madalin Ignisca <git@madalin.me> - 1.2.0-1
+- Reverse-DNS app ID; AppStream metainfo; i18n (Romanian starter); --version/--help
+
 * Wed Jun 10 2026 Madalin Ignisca <git@madalin.me> - 1.1.0-1
 - Switch build system from qmake6 to CMake
 - Add unit tests, linter configs, and CI

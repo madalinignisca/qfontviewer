@@ -17,6 +17,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             cmake ninja-build g++ qt6-base-dev qt6-base-dev-tools \
+            qt6-tools-dev qt6-l10n-tools \
             fonts-dejavu-core fonts-liberation
       - name: Configure
         run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
@@ -36,7 +37,7 @@ jobs:
         run: pacman -Sy --noconfirm archlinux-keyring && pacman -S --noconfirm git
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: pacman -S --noconfirm qt6-base cmake ninja gcc ttf-dejavu
+        run: pacman -S --noconfirm qt6-base qt6-tools cmake ninja gcc ttf-dejavu
       - name: Configure
         run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
       - name: Build
@@ -72,6 +73,18 @@ jobs:
       - name: reuse lint
         run: reuse lint
 
+  metadata:
+    name: AppStream & desktop validation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install validators
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends appstream desktop-file-utils
+      - name: Validate metainfo
+        run: appstreamcli validate data/io.github.madalinignisca.qfontviewer.metainfo.xml
+      - name: Validate desktop entry
+        run: desktop-file-validate io.github.madalinignisca.qfontviewer.desktop
+
   analyze:
     name: clang-tidy & clazy (advisory)
     runs-on: ubuntu-24.04
@@ -83,7 +96,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             cmake ninja-build clang clang-tidy clazy cppcheck \
-            qt6-base-dev qt6-base-dev-tools
+            qt6-base-dev qt6-base-dev-tools qt6-tools-dev qt6-l10n-tools
       # Configure with clang so compile_commands.json carries clang-compatible
       # flags (Qt6 adds the GCC-only -mno-direct-extern-access under g++, which
       # clang-tidy/clazy cannot parse).

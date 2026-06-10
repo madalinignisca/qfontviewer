@@ -1,14 +1,14 @@
 # Maintainer: Madalin Ignisca <git@madalin.me>
 pkgname=qfontviewer-git
 _pkgname=qfontviewer
-pkgver=1.1.0
+pkgver=1.2.0
 pkgrel=1
 pkgdesc="Minimal Qt6 font viewer with a console-rendering preview (git, links only qt6-base)"
 arch=('x86_64')
 url="https://github.com/madalinignisca/qfontviewer"
 license=('GPL-3.0-or-later')
 depends=('qt6-base')
-makedepends=('git' 'cmake')
+makedepends=('git' 'cmake' 'qt6-tools')
 provides=("$_pkgname")
 conflicts=("$_pkgname")
 source=("$_pkgname::git+$url.git")

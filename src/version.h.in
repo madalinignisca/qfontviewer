@@ -1,0 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Madalin Ignisca <git@madalin.me>
+
+#pragma once
+
+// Generated from version.h.in by CMake configure_file().
+#define QFV_VERSION "@PROJECT_VERSION@"

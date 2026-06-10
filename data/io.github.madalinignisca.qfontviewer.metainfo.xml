@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.madalinignisca.qfontviewer</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <name>Qt Font Viewer</name>
+  <summary>Minimal Qt6 font viewer with a console-rendering preview</summary>
+
+  <description>
+    <p>
+      Qt Font Viewer (qfontviewer) is a small, native font viewer that links only
+      qt6-base (Qt 6 Widgets) — no GNOME or KDE libraries, no QML, and no Python.
+    </p>
+    <p>
+      Its console-approximation preview renders a font at a chosen pixel size with
+      antialiasing and hinting disabled, magnified nearest-neighbor, with cell and
+      baseline overlay lines and an objective clipping readout — so you can tell
+      whether glyphs such as the underscore get clipped at small sizes before
+      committing a font to a terminal or virtual console. It also offers a glyph
+      grid and side-by-side comparison of two font families.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.madalinignisca.qfontviewer.desktop</launchable>
+
+  <categories>
+    <category>Graphics</category>
+    <category>Utility</category>
+  </categories>
+
+  <url type="homepage">https://github.com/madalinignisca/qfontviewer</url>
+  <url type="bugtracker">https://github.com/madalinignisca/qfontviewer/issues</url>
+  <url type="vcs-browser">https://github.com/madalinignisca/qfontviewer</url>
+
+  <developer id="me.madalin">
+    <name>Madalin Ignisca</name>
+  </developer>
+
+  <content_rating type="oars-1.1"/>
+
+  <releases>
+    <release version="1.2.0" date="2026-06-10">
+      <description>
+        <p>AppStream metadata, a reverse-DNS application ID, internationalization
+           infrastructure (with a Romanian starter translation), and a
+           --version/--help command-line interface.</p>
+      </description>
+    </release>
+    <release version="1.1.0" date="2026-06-10">
+      <description>
+        <p>Migrated the build to CMake; added unit tests, linters, and CI.</p>
+      </description>
+    </release>
+    <release version="1.0.0" date="2026-06-10">
+      <description>
+        <p>Initial release.</p>
+      </description>
+    </release>
+  </releases>
+</component>

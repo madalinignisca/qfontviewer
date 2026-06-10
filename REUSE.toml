@@ -15,8 +15,10 @@ path = [
     ".clang-tidy",
     ".pre-commit-config.yaml",
     ".github/**",
-    "qfontviewer.desktop",
-    "qfontviewer.svg",
+    "**/*.desktop",
+    "**/*.svg",
+    "**/*.xml",
+    "translations/**",
     "COPYING",
     "packaging/**",
 ]

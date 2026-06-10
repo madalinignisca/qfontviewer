@@ -95,8 +95,10 @@ launchers / `wmenu`). Pick a font on the left; the **Preview** tab shows it, the
 pixel size with *Antialias* off, and watch whether the `_` crosses the red
 cell-bottom line.
 
-The Wayland `app_id` is `qfontviewer`, so tiling-WM users can target it directly
-(e.g. in Sway: `for_window [app_id="qfontviewer"] floating enable`).
+`qfontviewer --version` / `--help` print the version and usage. The Wayland `app_id`
+is `io.github.madalinignisca.qfontviewer`, so tiling-WM users can target it directly
+(e.g. in Sway: `for_window [app_id="io.github.madalinignisca.qfontviewer"] floating enable`).
+The UI is translatable (Qt Linguist; a Romanian starter translation ships embedded).
 
 ## Contributing
 
