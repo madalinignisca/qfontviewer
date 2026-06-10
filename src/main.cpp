@@ -12,9 +12,9 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.setApplicationName(QStringLiteral("qfontviewer"));
-    app.setApplicationDisplayName(QStringLiteral("Qt Font Viewer"));
-    app.setApplicationVersion(QStringLiteral(QFV_VERSION));
+    QApplication::setApplicationName(QStringLiteral("qfontviewer"));
+    QApplication::setApplicationDisplayName(QStringLiteral("Qt Font Viewer"));
+    QApplication::setApplicationVersion(QStringLiteral(QFV_VERSION));
     // On Wayland (Sway) the app_id the compositor sees comes from the desktop file
     // name. Must be set before any window is shown; matches the installed .desktop.
     QGuiApplication::setDesktopFileName(QStringLiteral("io.github.madalinignisca.qfontviewer"));
@@ -37,5 +37,5 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     w.show();
-    return app.exec();
+    return QApplication::exec();
 }

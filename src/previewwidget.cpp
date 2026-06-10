@@ -112,14 +112,14 @@ void PreviewWidget::recompute()
         line.replace(QLatin1Char('\n'), QLatin1Char(' '));
         const int w1 = fmi.horizontalAdvance(line) + 2;
         const int h1 = fmi.height() + 2;
-        setMinimumSize(w1 * m_zoom + 16, h1 * m_zoom + 16);
+        setMinimumSize((w1 * m_zoom) + 16, (h1 * m_zoom) + 16);
     } else {
         setMinimumSize(0, 0);
     }
     updateGeometry();
 }
 
-void PreviewWidget::paintEvent(QPaintEvent *)
+void PreviewWidget::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter p(this);
     p.fillRect(rect(), Qt::white);
@@ -163,14 +163,15 @@ void PreviewWidget::paintEvent(QPaintEvent *)
     // Magnify nearest-neighbor (FastTransformation is a QImage::scaled() arg).
     const QImage big
         = img.scaled(w1 * m_zoom, h1 * m_zoom, Qt::IgnoreAspectRatio, Qt::FastTransformation);
-    const int ox = 8, oy = 8;
+    const int ox = 8;
+    const int oy = 8;
     p.drawImage(ox, oy, big);
 
     // Overlay: cell top (green), baseline (blue), cell bottom (red).
     const int z = m_zoom;
-    const int topY = oy + 1 * z; // baseline - ascent
-    const int baseY = oy + (1 + fm.ascent()) * z;
-    const int botY = oy + (1 + fm.ascent() + fm.descent()) * z;
+    const int topY = oy + (1 * z); // baseline - ascent
+    const int baseY = oy + ((1 + fm.ascent()) * z);
+    const int botY = oy + ((1 + fm.ascent() + fm.descent()) * z);
     const int right = ox + big.width();
 
     p.setPen(QPen(QColor(0, 170, 0), 1));

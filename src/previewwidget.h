@@ -17,7 +17,7 @@ class PreviewWidget : public QWidget {
 public:
     explicit PreviewWidget(QWidget *parent = nullptr);
 
-    QString family() const { return m_family; }
+    [[nodiscard]] QString family() const { return m_family; }
 
 public slots:
     void setFamily(const QString &family);
@@ -32,7 +32,7 @@ signals:
     void metricsUpdated(const QString &report);
 
 protected:
-    void paintEvent(QPaintEvent *) override;
+    void paintEvent(QPaintEvent * /*event*/) override;
 
 private:
     void recompute(); // recompute min size + emit the metrics report

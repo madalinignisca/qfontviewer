@@ -40,14 +40,15 @@ public:
     QString family;
     int glyphPx = 30;
 
-    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const override
+    [[nodiscard]] QSize sizeHint(
+        const QStyleOptionViewItem & /*option*/, const QModelIndex & /*index*/) const override
     {
-        return QSize(60, 70);
+        return { 60, 70 };
     }
 
     void paint(QPainter *p, const QStyleOptionViewItem &opt, const QModelIndex &idx) const override
     {
-        const bool sel = opt.state & QStyle::State_Selected;
+        const bool sel = opt.state.testFlag(QStyle::State_Selected);
         p->fillRect(opt.rect, sel ? opt.palette.highlight() : QBrush(Qt::white));
 
         const QColor fg = sel ? opt.palette.highlightedText().color() : QColor(Qt::black);
@@ -95,27 +96,33 @@ void GlyphModel::setFamily(const QString &family)
         QFont f(family);
         f.setStyleStrategy(QFont::NoFontMerging); // coverage of THIS family only
         const QFontMetrics fm(f);
-        for (const Range &r : kRanges)
-            for (uint cp = r.lo; cp <= r.hi; ++cp)
-                if (fm.inFontUcs4(cp))
+        for (const Range &r : kRanges) {
+            for (uint cp = r.lo; cp <= r.hi; ++cp) {
+                if (fm.inFontUcs4(cp)) {
                     m_cps.append(cp);
+                }
+            }
+        }
     }
     endResetModel();
 }
 
 int GlyphModel::rowCount(const QModelIndex &parent) const
 {
-    return parent.isValid() ? 0 : m_cps.size();
+    return parent.isValid() ? 0 : static_cast<int>(m_cps.size());
 }
 
 QVariant GlyphModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.row() >= m_cps.size())
+    if (!index.isValid() || index.row() >= m_cps.size()) {
         return { };
+    }
     const uint cp = m_cps.at(index.row());
     switch (role) {
-    case Qt::DisplayRole:
-        return QString::fromUcs4(reinterpret_cast<const char32_t *>(&cp), 1);
+    case Qt::DisplayRole: {
+        const char32_t ucs4 = cp;
+        return QString::fromUcs4(&ucs4, 1);
+    }
     case CodepointRole:
         return cp;
     default:
@@ -125,7 +132,7 @@ QVariant GlyphModel::data(const QModelIndex &index, int role) const
 
 int GlyphModel::rowOfCodepoint(uint cp) const
 {
-    return m_cps.indexOf(cp);
+    return static_cast<int>(m_cps.indexOf(cp));
 }
 uint GlyphModel::codepointAt(int row) const
 {
@@ -137,10 +144,11 @@ uint GlyphModel::codepointAt(int row) const
 // ----------------------------------------------------------------------------
 GlyphGrid::GlyphGrid(QWidget *parent)
     : QWidget(parent)
+    , m_model(new GlyphModel(this))
+    , m_view(new QListView(this))
+    , m_detail(new QLabel(this))
 {
-    m_model = new GlyphModel(this);
 
-    m_view = new QListView(this);
     m_view->setModel(m_model);
     auto *delegate = new GlyphDelegate(m_view);
     m_view->setItemDelegate(delegate);
@@ -151,7 +159,6 @@ GlyphGrid::GlyphGrid(QWidget *parent)
     m_view->setUniformItemSizes(true);
     m_view->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    m_detail = new QLabel(this);
     m_detail->setAlignment(Qt::AlignCenter);
     m_detail->setMinimumHeight(64);
     m_detail->setFrameShape(QFrame::StyledPanel);
@@ -187,8 +194,9 @@ void GlyphGrid::gotoCodepoint(uint cp)
 
 void GlyphGrid::onCurrentChanged(const QModelIndex &cur)
 {
-    if (!cur.isValid())
+    if (!cur.isValid()) {
         return;
+    }
     const uint cp = cur.data(GlyphModel::CodepointRole).toUInt();
     const QString ch = cur.data(Qt::DisplayRole).toString();
 

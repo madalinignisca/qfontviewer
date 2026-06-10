@@ -26,11 +26,11 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+    , m_tabs(new QTabWidget(this))
 {
     auto *splitter = new QSplitter(Qt::Horizontal, this);
     splitter->addWidget(buildFontPanel());
 
-    m_tabs = new QTabWidget(this);
     m_tabs->addTab(buildPreviewTab(), tr("Preview"));
     m_tabs->addTab(buildGlyphTab(), tr("Glyphs"));
     splitter->addWidget(m_tabs);
@@ -82,8 +82,9 @@ QWidget *MainWindow::buildFontPanel()
     connect(m_monoOnly, &QCheckBox::toggled, m_proxy, &FontFilterProxy::setMonospaceOnly);
     connect(m_fontList->selectionModel(), &QItemSelectionModel::currentChanged, this,
         [this](const QModelIndex &cur, const QModelIndex &) {
-            if (cur.isValid())
+            if (cur.isValid()) {
                 onFontSelected(cur.data(Qt::DisplayRole).toString());
+            }
         });
     return panel;
 }
@@ -169,8 +170,9 @@ QWidget *MainWindow::buildPreviewTab()
     connect(m_hint, &QCheckBox::toggled, this, &MainWindow::applyParams);
     connect(m_compare, &QCheckBox::toggled, this, &MainWindow::onCompareToggled);
     connect(m_familyB, &QComboBox::currentTextChanged, this, [this](const QString &fam) {
-        if (m_prevB)
+        if (m_prevB) {
             m_prevB->setFamily(fam);
+        }
     });
     connect(m_prevA, &PreviewWidget::metricsUpdated, this,
         [this](const QString &r) { m_clip->setText(r); });
@@ -205,10 +207,12 @@ QWidget *MainWindow::buildGlyphTab()
 void MainWindow::onFontSelected(const QString &family)
 {
     m_currentFamily = family;
-    if (m_prevA)
+    if (m_prevA != nullptr) {
         m_prevA->setFamily(family);
-    if (m_glyphs)
+    }
+    if (m_glyphs != nullptr) {
         m_glyphs->setFamily(family);
+    }
     refreshStatus(family);
 }
 
@@ -221,24 +225,27 @@ void MainWindow::applyParams()
     const bool hint = m_hint->isChecked();
 
     for (PreviewWidget *pw : { m_prevA, m_prevB }) {
-        if (!pw)
+        if (pw == nullptr) {
             continue;
+        }
         pw->setText(text);
         pw->setPixelSize(px);
         pw->setZoom(z);
         pw->setAntialias(aa);
         pw->setHinting(hint);
     }
-    if (m_prevA)
+    if (m_prevA != nullptr) {
         m_prevA->setFamily(m_currentFamily);
+    }
 }
 
 void MainWindow::onCompareToggled(bool on)
 {
     m_paneB->setVisible(on);
-    if (on && m_prevB) {
-        if (m_familyB->currentText().isEmpty())
+    if (on && (m_prevB != nullptr)) {
+        if (m_familyB->currentText().isEmpty()) {
             m_familyB->setCurrentText(m_currentFamily);
+        }
         m_prevB->setFamily(m_familyB->currentText());
         applyParams();
     }
@@ -250,8 +257,9 @@ void MainWindow::onGoto()
     s.remove(QStringLiteral("U+"), Qt::CaseInsensitive);
     bool ok = false;
     const uint cp = s.toUInt(&ok, 16);
-    if (ok && m_glyphs)
+    if (ok && (m_glyphs != nullptr)) {
         m_glyphs->gotoCodepoint(cp);
+    }
 }
 
 void MainWindow::refreshStatus(const QString &family)

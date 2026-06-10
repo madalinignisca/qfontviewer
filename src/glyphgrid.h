@@ -21,13 +21,13 @@ public:
     explicit GlyphModel(QObject *parent = nullptr);
 
     void setFamily(const QString &family);
-    QString family() const { return m_family; }
+    [[nodiscard]] QString family() const { return m_family; }
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
+    [[nodiscard]] int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
 
-    int rowOfCodepoint(uint cp) const; // -1 if not present
-    uint codepointAt(int row) const;
+    [[nodiscard]] int rowOfCodepoint(uint cp) const; // -1 if not present
+    [[nodiscard]] uint codepointAt(int row) const;
 
 private:
     QString m_family;

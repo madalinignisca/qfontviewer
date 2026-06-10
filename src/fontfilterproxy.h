@@ -16,7 +16,8 @@ public:
     void setNameFilter(const QString &text);
 
 protected:
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+    [[nodiscard]] bool filterAcceptsRow(
+        int sourceRow, const QModelIndex &sourceParent) const override;
 
 private:
     bool m_monoOnly = false;

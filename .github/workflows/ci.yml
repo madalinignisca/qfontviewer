@@ -86,9 +86,8 @@ jobs:
         run: desktop-file-validate io.github.madalinignisca.qfontviewer.desktop
 
   analyze:
-    name: clang-tidy & clazy (advisory)
+    name: static analysis
     runs-on: ubuntu-24.04
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
@@ -104,11 +103,19 @@ jobs:
         run: >
           cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=OFF
           -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang
+      # clang-tidy and clazy are blocking (the tree is clean; regressions fail CI).
       - name: clang-tidy
-        run: clang-tidy -p build src/*.cpp
+        run: clang-tidy -p build --warnings-as-errors='*' src/*.cpp
       - name: clazy
-        run: clazy-standalone -p build src/*.cpp
-      - name: cppcheck
+        run: |
+          out=$(clazy-standalone -p build src/*.cpp 2>&1)
+          echo "$out"
+          if echo "$out" | grep -q 'warning:'; then
+            echo "::error::clazy reported warnings"; exit 1
+          fi
+      # cppcheck remains advisory (can't be reproduced locally on the dev box).
+      - name: cppcheck (advisory)
+        continue-on-error: true
         run: >
           cppcheck --enable=warning,performance,portability --std=c++17
           --project=build/compile_commands.json --suppress=missingIncludeSystem

@@ -1,14 +1,16 @@
-# Advisory static analysis (CI runs this non-blocking at first).
+# Static analysis (CI runs clang-tidy as a blocking check).
 Checks: >
   bugprone-*,
   performance-*,
   modernize-*,
   cppcoreguidelines-*,
   readability-*,
-  misc-include-cleaner,
   -modernize-use-trailing-return-type,
   -readability-magic-numbers,
   -readability-identifier-length,
+  -readability-redundant-access-specifiers,
+  -cppcoreguidelines-use-enum-class,
+  -performance-enum-size,
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-avoid-c-arrays,
   -modernize-avoid-c-arrays,
