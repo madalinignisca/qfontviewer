@@ -9,6 +9,6 @@ pkgbase = qfontviewer
 	makedepends = qt6-tools
 	depends = qt6-base
 	source = qfontviewer-1.2.0.tar.gz::https://github.com/madalinignisca/qfontviewer/archive/refs/tags/v1.2.0.tar.gz
-	sha256sums = SKIP
+	sha256sums = 88002f1e00aa1eba2a56f3b3a197622d4446e5a8a5f0db3e46417793453fd3ee
 
 pkgname = qfontviewer
