@@ -1,0 +1,25 @@
+Source: qfontviewer
+Section: utils
+Priority: optional
+Maintainer: Madalin Ignisca <git@madalin.me>
+Build-Depends: debhelper-compat (= 13),
+               qmake6,
+               qt6-base-dev
+Standards-Version: 4.6.2
+Homepage: https://github.com/madalinignisca/qfontviewer
+Rules-Requires-Root: no
+
+Package: qfontviewer
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Description: minimal Qt6 font viewer with a console-rendering preview
+ qfontviewer is a small Qt6 Widgets application for browsing installed fonts.
+ It links only qt6-base (no GNOME/KDE libraries, no QML, no Python).
+ .
+ Its console-approximation mode renders a font at a chosen pixel size with
+ antialiasing and hinting disabled, magnified nearest-neighbor, with overlay
+ lines and an objective clipping readout - so you can tell whether glyphs such
+ as the underscore get clipped at small sizes before committing a font to a
+ terminal or virtual console. It also offers a glyph grid and side-by-side
+ comparison of two families.

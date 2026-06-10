@@ -1,0 +1,12 @@
+pkgbase = qfontviewer
+	pkgdesc = Minimal Qt6 font viewer with a console-rendering preview (links only qt6-base)
+	pkgver = 1.0.0
+	pkgrel = 1
+	url = https://github.com/madalinignisca/qfontviewer
+	arch = x86_64
+	license = GPL-3.0-or-later
+	depends = qt6-base
+	source = qfontviewer-1.0.0.tar.gz::https://github.com/madalinignisca/qfontviewer/archive/refs/tags/v1.0.0.tar.gz
+	sha256sums = SKIP
+
+pkgname = qfontviewer

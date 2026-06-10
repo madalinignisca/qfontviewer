@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Qt Font Viewer
+GenericName=Font Viewer
+Comment=Preview installed fonts and predict console glyph clipping
+Exec=qfontviewer
+Icon=qfontviewer
+Categories=Graphics;Viewer;
+Terminal=false
+StartupNotify=true
