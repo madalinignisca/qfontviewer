@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (C) 2026 Madalin Ignisca <git@madalin.me>
+// SPDX-FileCopyrightText: 2026 Madalin Ignisca <git@madalin.me>
 
 #pragma once
 #include <QWidget>

@@ -12,6 +12,7 @@ look at fonts: it links **only `qt6-base`** (Qt 6 Widgets). No GNOME or KDE
 libraries, no QML runtime, no Python — just one Qt library and a ~150 KB binary.
 
 [![CI](https://github.com/madalinignisca/qfontviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/madalinignisca/qfontviewer/actions/workflows/ci.yml)
+[![REUSE status](https://api.reuse.software/badge/github.com/madalinignisca/qfontviewer)](https://api.reuse.software/info/github.com/madalinignisca/qfontviewer)
 ![license](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)
 ![Qt](https://img.shields.io/badge/Qt-6%20Widgets-41cd52)
 ![deps](https://img.shields.io/badge/runtime%20deps-qt6--base%20only-brightgreen)
@@ -101,9 +102,11 @@ The Wayland `app_id` is `qfontviewer`, so tiling-WM users can target it directly
 
 Issues and pull requests are welcome. The codebase is deliberately small and plain
 Qt6 Widgets C++17 — no extra dependencies, please, to keep the "minimal" promise.
-Build, test, and linting instructions are in [`BUILDING.md`](BUILDING.md); CI runs
-the tests plus clang-format/clang-tidy/clazy on every push and PR. Please run
-`clang-format` and `ctest` before opening a PR.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the workflow (build/test/`pre-commit`),
+the [Code of Conduct](CODE_OF_CONDUCT.md), and [`SECURITY.md`](SECURITY.md) for
+reporting vulnerabilities. Build/linting details are in [`BUILDING.md`](BUILDING.md);
+CI runs tests, `pre-commit` (clang-format), `reuse lint`, and clang-tidy/clazy/cppcheck.
+The project is [REUSE](https://reuse.software)-compliant.
 
 ## License
 

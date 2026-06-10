@@ -44,17 +44,33 @@ jobs:
       - name: Test
         run: ctest --test-dir build --output-on-failure
 
-  format:
-    name: clang-format
+  pre-commit:
+    name: pre-commit
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      # Pin clang-format via the PyPI wheel so the version is identical
-      # everywhere (distro clang-format versions format differently).
-      - name: Install clang-format (pinned)
-        run: pipx install clang-format==22.1.5
-      - name: Check formatting
-        run: clang-format --dry-run --Werror src/*.cpp src/*.h tests/*.cpp
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install pre-commit
+        run: pip install pre-commit
+      # Runs clang-format (pinned 22.1.5 via the mirror) plus the hygiene hooks,
+      # reproducibly across machines.
+      - name: Run pre-commit
+        run: pre-commit run --all-files --show-diff-on-failure
+
+  reuse:
+    name: REUSE compliance
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install reuse
+        run: pip install reuse==6.2.0
+      - name: reuse lint
+        run: reuse lint
 
   analyze:
     name: clang-tidy & clazy (advisory)
@@ -66,7 +82,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            cmake ninja-build clang clang-tidy clazy \
+            cmake ninja-build clang clang-tidy clazy cppcheck \
             qt6-base-dev qt6-base-dev-tools
       # Configure with clang so compile_commands.json carries clang-compatible
       # flags (Qt6 adds the GCC-only -mno-direct-extern-access under g++, which
@@ -79,3 +95,7 @@ jobs:
         run: clang-tidy -p build src/*.cpp
       - name: clazy
         run: clazy-standalone -p build src/*.cpp
+      - name: cppcheck
+        run: >
+          cppcheck --enable=warning,performance,portability --std=c++17
+          --project=build/compile_commands.json --suppress=missingIncludeSystem

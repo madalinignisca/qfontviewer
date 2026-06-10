@@ -14,14 +14,16 @@ value they add; order within a tier is rough priority.
 - [x] **GitHub Actions CI** — builds on Ubuntu + Arch, runs format check + tests
       (blocking) and clang-tidy + clazy (advisory); status badge in the README.
 
-## Tier 2 — CI depth & repository hygiene
+## Tier 2 — CI depth & repository hygiene ✅
 
-- [ ] `.editorconfig`.
-- [ ] Community files: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`,
-      issue/PR templates under `.github/`.
-- [ ] `cppcheck` and include-what-you-use passes (alongside clang-tidy).
-- [ ] `pre-commit` hooks running clang-format.
-- [ ] REUSE compliance (`LICENSES/` dir + `reuse lint`); SPDX headers already present.
+- [x] `.editorconfig`.
+- [x] Community files: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant
+      2.1), `SECURITY.md`, issue forms + PR template under `.github/`.
+- [x] `cppcheck` (advisory CI). IWYU intentionally skipped in favor of clang-tidy's
+      `misc-include-cleaner`.
+- [x] `pre-commit` hooks (clang-format 22.1.5 + hygiene); CI runs `pre-commit run --all-files`.
+- [x] REUSE compliance (`LICENSES/` + `REUSE.toml` + `reuse lint` CI job + badge);
+      SPDX headers canonicalized to `SPDX-FileCopyrightText`.
 
 ## Tier 3 — Linux-desktop distribution polish
 

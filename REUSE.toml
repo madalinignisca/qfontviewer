@@ -1,0 +1,25 @@
+version = 1
+SPDX-PackageName = "qfontviewer"
+SPDX-PackageSupplier = "Madalin Ignisca <git@madalin.me>"
+SPDX-PackageDownloadLocation = "https://github.com/madalinignisca/qfontviewer"
+
+# C++ sources, CMake files carry their own SPDX headers. Everything else
+# (docs, configs, CI, packaging, metadata) is covered here.
+[[annotations]]
+path = [
+    "*.md",
+    "**/*.md",
+    ".gitignore",
+    ".editorconfig",
+    ".clang-format",
+    ".clang-tidy",
+    ".pre-commit-config.yaml",
+    ".github/**",
+    "qfontviewer.desktop",
+    "qfontviewer.svg",
+    "COPYING",
+    "packaging/**",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Madalin Ignisca <git@madalin.me>"
+SPDX-License-Identifier = "GPL-3.0-or-later"

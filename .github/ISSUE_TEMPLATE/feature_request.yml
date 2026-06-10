@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest an idea for qfontviewer
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please keep qfontviewer's core constraint in mind: it links only `qt6-base`
+        (no extra runtime dependencies).
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      description: What are you trying to do that's hard or impossible today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
