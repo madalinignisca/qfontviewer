@@ -7,6 +7,6 @@ pkgbase = qfontviewer
 	license = GPL-3.0-or-later
 	depends = qt6-base
 	source = qfontviewer-1.0.0.tar.gz::https://github.com/madalinignisca/qfontviewer/archive/refs/tags/v1.0.0.tar.gz
-	sha256sums = SKIP
+	sha256sums = 2cd1ca62e1818609d6f76003c4288b509fed509940c02237ae46056f809b9a94
 
 pkgname = qfontviewer

@@ -8,8 +8,7 @@ url="https://github.com/madalinignisca/qfontviewer"
 license=('GPL-3.0-or-later')
 depends=('qt6-base')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
-# Replace with the real checksum after tagging the release:  updpkgsums
-sha256sums=('SKIP')
+sha256sums=('2cd1ca62e1818609d6f76003c4288b509fed509940c02237ae46056f809b9a94')
 
 build() {
     cd "$pkgname-$pkgver"
