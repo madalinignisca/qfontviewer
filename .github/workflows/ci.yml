@@ -111,17 +111,16 @@ jobs:
         run: >
           cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=OFF
           -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang
-      # clang-tidy and clazy are blocking (the tree is clean; regressions fail CI).
+      # clang-tidy is blocking — its version is pinned (above), so its checks are
+      # reproducible locally. The tree is clean; regressions fail CI.
       - name: clang-tidy
         run: clang-tidy -p build --warnings-as-errors='*' src/*.cpp
-      - name: clazy
-        run: |
-          out=$(clazy-standalone -p build src/*.cpp 2>&1)
-          echo "$out"
-          if echo "$out" | grep -q 'warning:'; then
-            echo "::error::clazy reported warnings"; exit 1
-          fi
-      # cppcheck remains advisory (can't be reproduced locally on the dev box).
+      # clazy and cppcheck are advisory: neither can be version-pinned the way
+      # clang-tidy/clang-format are (distro clazy drifts; cppcheck can't be run on
+      # the dev box), so they report but don't block.
+      - name: clazy (advisory)
+        continue-on-error: true
+        run: clazy-standalone -p build src/*.cpp
       - name: cppcheck (advisory)
         continue-on-error: true
         run: >
