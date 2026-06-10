@@ -48,7 +48,11 @@ Installed files: `${prefix}/bin/qfontviewer`,
 
 The repo ships `.clang-format` and `.clang-tidy`. CI (`.github/workflows/ci.yml`)
 builds on Ubuntu and Arch, runs the tests, checks formatting, and runs clang-tidy +
-clazy (advisory). Run them locally:
+clazy (advisory). Run them locally.
+
+CI pins **clang-format 22.1.5** via the PyPI wheel
+(`pipx install clang-format==22.1.5`) so formatting is identical across distros;
+use a matching 22.x locally.
 
 ```sh
 clang-format --dry-run --Werror src/*.cpp src/*.h tests/*.cpp

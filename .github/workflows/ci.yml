@@ -49,8 +49,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Install clang-format
-        run: sudo apt-get update && sudo apt-get install -y clang-format
+      # Pin clang-format via the PyPI wheel so the version is identical
+      # everywhere (distro clang-format versions format differently).
+      - name: Install clang-format (pinned)
+        run: pipx install clang-format==22.1.5
       - name: Check formatting
         run: clang-format --dry-run --Werror src/*.cpp src/*.h tests/*.cpp
 
