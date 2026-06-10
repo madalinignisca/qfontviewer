@@ -90,12 +90,20 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            cmake ninja-build clang clang-tidy clazy cppcheck \
+            cmake ninja-build clang clazy cppcheck \
             qt6-base-dev qt6-base-dev-tools qt6-tools-dev qt6-l10n-tools
+      # Pin clang-tidy via the PyPI wheel so its version (and thus its checks) is
+      # identical to local dev — distro clang-tidy versions differ and drift. The
+      # wheel bundles its own clang, so it isn't tied to the apt clang version.
+      - name: Install clang-tidy (pinned)
+        run: pip install clang-tidy==22.1.0
       # Configure with clang so compile_commands.json carries clang-compatible
       # flags (Qt6 adds the GCC-only -mno-direct-extern-access under g++, which
       # clang-tidy/clazy cannot parse).

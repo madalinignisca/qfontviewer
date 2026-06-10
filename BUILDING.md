@@ -47,12 +47,13 @@ Installed files: `${prefix}/bin/qfontviewer`,
 ## Code quality
 
 The repo ships `.clang-format` and `.clang-tidy`. CI (`.github/workflows/ci.yml`)
-builds on Ubuntu and Arch, runs the tests, checks formatting, and runs clang-tidy +
-clazy (advisory). Run them locally.
+builds on Ubuntu and Arch, runs the tests, and runs clang-format, clang-tidy, and
+clazy as **blocking** checks (cppcheck is advisory). Run them locally too.
 
-CI pins **clang-format 22.1.5** via the PyPI wheel
-(`pipx install clang-format==22.1.5`) so formatting is identical across distros;
-use a matching 22.x locally.
+CI pins **clang-format 22.1.5** and **clang-tidy 22.1.0** via the PyPI wheels
+(`pipx install clang-format==22.1.5`, `pip install clang-tidy==22.1.0`) so their
+checks are identical across distros — distro clang-tidy versions differ and drift.
+Use a matching 22.x locally.
 
 ```sh
 clang-format --dry-run --Werror src/*.cpp src/*.h tests/*.cpp
